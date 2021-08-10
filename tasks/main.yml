@@ -1,0 +1,101 @@
+---
+- name: Install mailman build packages
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - gcc-c++
+    - python-dns
+    - python-devel
+  tags: mailman
+
+- name: Create mailman group
+  group:
+    name: '{{ mailman_group }}'
+  tags: mailman
+
+- name: Create mailman user
+  user:
+    name: '{{ mailman_user }}'
+    shell: '/bin/false'
+    create_home: no
+  tags: mailman
+
+- name: Make mailman directory
+  file:
+    path: '{{ mailman_dir }}'
+    state: directory
+    recurse: yes
+    #owner: '{{ mailman_user }}'
+    owner: 'root'
+    group: '{{ mailman_group }}'
+    mode: 02775
+  tags: mailman
+
+- name: Download mailman package
+  get_url:
+    url: 'http://ftp.gnu.org/gnu/mailman/mailman-{{ mailman_version }}.tgz'
+    dest: '/tmp/mailman-latest.tar.gz'
+  tags: mailman
+
+- name: Create mailman build directory
+  file:
+    path: '{{ mailman_build_dir }}'
+    state: directory
+    recurse: yes
+  tags: mailman
+
+- name: Unarchive mailman package
+  unarchive:
+    src: '/tmp/mailman-latest.tar.gz'
+    dest: '{{ mailman_build_dir }}'
+    remote_src: yes
+    extra_opts: ['--strip-components=1']
+  tags: mailman
+
+- name: Make and Install mailman
+  command: '{{ item }}'
+  args:
+    chdir: '{{ mailman_build_dir }}'
+  with_items:
+    - './configure --prefix={{ mailman_dir }} --with-mail-gid=postfix --with-cgi-gid=nginx'
+    - 'make'
+    - 'make install'
+  tags: mailman
+
+# - name: Reset group permission
+#   command:
+#     cmd: 'chmod -R g-w {{ mailman_dir }}'
+#   tags: mailman
+
+- name: Copy config file
+  template:
+    src: 'mm_cfg.py.j2'
+    dest: '{{ mailman_dir }}/Mailman/mm_cfg.py'
+    owner: 'root'
+    group: '{{ mailman_group }}'
+    mode: 0755
+  register: mailman_update_config
+  tags: mailman
+
+- name: Generate aliases.db file
+  command:
+    cmd: '{{ mailman_dir }}/bin/genaliases'
+  when: mailman_update_config.changed
+  tags: mailman
+
+# check permisison after installing all config files.
+- name: Check and Fix permission
+  shell: '{{ mailman_dir }}/bin/check_perms -f'
+  tags: mailman
+
+- name: Set password
+  command:
+    cmd: '{{ mailman_dir }}/bin/mmsitepass {{ mailman_admin_password }}'
+  tags: mailman
+
+- name: Register cron
+  command:
+    cmd: 'crontab -u {{ mailman_user }} {{ mailman_dir }}/cron/crontab.in'
+  tags: mailman
+

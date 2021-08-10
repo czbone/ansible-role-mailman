@@ -1,0 +1,24 @@
+---
+mailman_version: '2.1.34'
+mailman_group: 'mailman'
+mailman_user: 'mailman'
+mailman_admin_password: 'mailmanpassword'
+mailman_dir: '/usr/local/mailman'
+mailman_build_dir: '/tmp/mailman'
+
+mailman_email_host: 'mail.example.com'   # SMTP server name
+mailman_url_host:   'www.example.com'    # Web server name
+mailman_app_url:    'https://%s/mailman/'  # Mailman application url
+
+mailman_virtual_domains:
+  - domain: 'example.net'
+    list:   'list.example.net'
+  - domain: 'example.org'
+    list:   'list.example.org'
+
+#DEFAULT_LIST_ADVERTISED = No                    # メーリングリスト一覧を非公開にする
+#OWNERS_CAN_DELETE_THEIR_OWN_LISTS = Yes         # メーリングリストをWeb上から削除可能にする
+#DEFAULT_SUBJECT_PREFIX = "[%(real_name)s:%%d] " # 件名に記事№を付加する
+#DEFAULT_REPLY_GOES_TO_LIST = 1                  # 返信先を投稿者ではなくリストにする
+#DEFAULT_NEW_MEMBER_OPTIONS = 258                # 投稿した本人にはメールを送らないようにする
+#DEFAULT_GENERIC_NONMEMBER_ACTION = 2            # 非会員からのメールには拒否応答
