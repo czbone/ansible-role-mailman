@@ -99,3 +99,12 @@
     cmd: 'crontab -u {{ mailman_user }} {{ mailman_dir }}/cron/crontab.in'
   tags: mailman
 
+- name: Install service
+  template:
+    src: 'mailman.service.j2'
+    dest: '/etc/systemd/system/mailman.service'
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+  notify: Restart mailman
+  tags: mailman

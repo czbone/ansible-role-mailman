@@ -1,0 +1,13 @@
+[Unit]
+Description=GNU Mailing List Manager
+After=syslog.target network.target
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+ExecStart={{ mailman_dir }}/bin/mailmanctl -s start
+ExecReload={{ mailman_dir }}/bin/mailmanctl restart
+ExecStop={{ mailman_dir }}/bin/mailmanctl stop
+
+[Install]
+WantedBy=multi-user.target

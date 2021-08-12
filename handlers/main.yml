@@ -1,0 +1,5 @@
+---
+- name: Restart mailman
+  service:
+    name: '{{ mailman_service }}'
+    state: restarted

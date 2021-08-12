@@ -2,7 +2,6 @@ Mailman build install with Ansible
 ===========================
 
 This Ansible Role makes from source , installs, configures Mailman for a linux server. The following tasks will be configured:
-* `Make and Install , configure Mailman`
 
 Requirements
 ------------
@@ -19,6 +18,7 @@ Variables are self speaking or documented in:
 Dependencies
 ------------
 
-This Ansilbe Role has no dependencies.
+* nginxinc.nginx
+
 
 
