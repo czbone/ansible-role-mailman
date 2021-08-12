@@ -108,3 +108,10 @@
     mode: 0644
   notify: Restart mailman
   tags: mailman
+
+- name: Ensure service is started
+  service:
+    name: "{{ mailman_service }}"
+    state: started
+    enabled: true
+  tags: mailman

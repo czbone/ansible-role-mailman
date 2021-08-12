@@ -70,7 +70,9 @@ DEFAULT_REPLY_GOES_TO_LIST = 1
 DEFAULT_NEW_MEMBER_OPTIONS = 258
 DEFAULT_GENERIC_NONMEMBER_ACTION = 2
 
-POSTFIX_STYLE_VIRTUAL_DOMAINS = {{ mailman_virtual_domains | map(attribute='domain') | list | to_json }}
+# virtual domains are not managed by Mailman, only managed by PostfixAdmin.
+VIRTUAL_HOSTS.clear()
 {% for item in mailman_virtual_domains %}
 add_virtualhost('{{ item.list }}', '{{ item.domain }}')
 {% endfor %}
+POSTFIX_STYLE_VIRTUAL_DOMAINS = {{ mailman_virtual_domains | map(attribute='domain') | list | to_json }}
